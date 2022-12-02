@@ -12,31 +12,16 @@ fn main() {
 
         let player_one_move =
             part_one_player_one(split.next().expect("Error in splitting line; first part"));
+            
         let player_two_move_part_one =
             part_one_player_two(split.next().expect("Error in splitting line; second part"));
 
         let player_two_move_part_two =
             part_two_player_two(player_one_move, player_two_move_part_one);
 
-        player_two_score_part_one += player_two_move_part_one;
+        player_two_score_part_one += calculate_score(player_one_move, player_two_move_part_one);
 
-        if player_two_move_part_one == player_one_move + 1
-            || (player_one_move == 3 && player_two_move_part_one == 1)
-        {
-            player_two_score_part_one += 6;
-        } else if player_one_move == player_two_move_part_one {
-            player_two_score_part_one += 3;
-        }
-
-        player_two_score_part_two += player_two_move_part_two;
-
-        if player_two_move_part_two == player_one_move + 1
-            || (player_one_move == 3 && player_two_move_part_two == 1)
-        {
-            player_two_score_part_two += 6;
-        } else if player_one_move == player_two_move_part_two {
-            player_two_score_part_two += 3;
-        }
+        player_two_score_part_two += calculate_score(player_one_move, player_two_move_part_two);
     }
 
     println!(
@@ -47,6 +32,18 @@ fn main() {
         "Player two score for part two is {}",
         player_two_score_part_two
     );
+}
+
+fn calculate_score(player_one_move: i32, player_two_move: i32) -> i32 {
+    let mut score = 0;
+    score += player_two_move;
+    if player_two_move == player_one_move + 1 || (player_one_move == 3 && player_two_move == 1) {
+        score += 6;
+    } else if player_one_move == player_two_move {
+        score += 3;
+    }
+
+    return score;
 }
 
 fn part_one_player_one(player_move: &str) -> i32 {
