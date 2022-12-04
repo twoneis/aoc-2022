@@ -27,8 +27,8 @@ fn main() {
             contained_line_counter += 1;
         }
 
-        if (line_numbers[1] >= line_numbers[2] && line_numbers[0] <= line_numbers[2])
-            || (line_numbers[3] >= line_numbers[0] && line_numbers[2] <= line_numbers[0])
+        if (line_numbers[1] >= line_numbers[2] && line_numbers[0] <= line_numbers[3])
+            || (line_numbers[3] >= line_numbers[0] && line_numbers[2] <= line_numbers[1])
         {
             overlap_line_counter += 1;
         }
