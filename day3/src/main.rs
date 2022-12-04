@@ -3,6 +3,7 @@ use std::fs;
 fn main() {
     let input = fs::read_to_string("inputs.txt").expect("Error reading input file");
     let split_inputs = input.lines();
+
     let mut priority_sum = 0;
     let mut group: Vec<&str> = Vec::new();
     let mut group_sum = 0;
@@ -20,8 +21,8 @@ fn main() {
         }
     }
 
-    println!("{}", priority_sum);
-    println!("{}", group_sum);
+    println!("The sum of the priority of all letters that appear in both compartments of the same bag is {}", priority_sum);
+    println!("The sum of the priority of all letters that appear in all three bags is {}", group_sum);
 }
 
 fn get_dup_letter (items: (&str, &str)) -> char{
@@ -32,7 +33,7 @@ fn get_dup_letter (items: (&str, &str)) -> char{
             }
         }
     }
-    return 'Z';
+    return '\n';
 }
 
 fn get_group_letter (group: &Vec<&str>) -> char {
@@ -40,20 +41,16 @@ fn get_group_letter (group: &Vec<&str>) -> char {
         for second_bag_letter in group[1].chars() {
             if first_bag_letter.eq(&second_bag_letter) {
                 for third_bag_letter in group[2].chars() {
-                    if first_bag_letter.eq(&third_bag_letter) {
-                        return first_bag_letter;
-                    }
+                    if first_bag_letter.eq(&third_bag_letter) { return first_bag_letter; }
                 }
             }
         }
     }
-    return 'Z';
+    return '\n';
 }
 
 fn letter_to_u32 (letter: char) -> u32 {
-    let mut ret_val = letter.to_digit(36).expect("not valid letter") - 9;
-    if letter.is_uppercase() {
-        ret_val += 26;
-    }
+    let mut ret_val = letter.to_digit(36).expect("Trying to convert non-letter char to int") - 9;
+    if letter.is_uppercase() { ret_val += 26; }
     return ret_val;
 }
