@@ -21,8 +21,8 @@ fn main() {
         }
     }
 
-    println!("The sum of the priority of all letters that appear in both compartments of the same bag is {}", priority_sum);
-    println!("The sum of the priority of all letters that appear in all three bags is {}", group_sum);
+    println!("The sum of the priority of all letters that appear in both compartments of the same bag is {priority_sum}");
+    println!("The sum of the priority of all letters that appear in all three bags is {group_sum}");
 }
 
 fn get_dup_letter (items: (&str, &str)) -> char{
