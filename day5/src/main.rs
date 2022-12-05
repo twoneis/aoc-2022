@@ -1,5 +1,3 @@
-use std::arch::x86_64::_SIDD_MASKED_POSITIVE_POLARITY;
-use std::clone;
 use std::collections::VecDeque;
 use std::fs;
 use std::str;
