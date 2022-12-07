@@ -1,4 +1,4 @@
-use std::fs;
+use std::{fs, vec};
 
 struct ArenaTree<T>
 where
@@ -32,7 +32,7 @@ where
 {
     idx: usize,
     val: T,
-    size: i32,
+    size: u128,
     parent: Option<usize>,
     children: Vec<usize>,
 }
@@ -57,7 +57,7 @@ fn main() {
     let line_split = input.lines();
 
     let mut tree = ArenaTree::new();
-    let root = Node::new(0, "root");
+    let root = Node::new(0, "root".to_owned());
     tree.node(root.val);
     let mut current_dir = root.idx;
 
@@ -65,12 +65,75 @@ fn main() {
         if line.contains("$") {
             current_dir = handle_command(line, &tree, &mut current_dir);
         } else {
-            handle_output(line, &mut tree, &mut current_dir);
+            let node_to_add = handle_output(line, &tree, current_dir);
+
+            tree.arena[current_dir].children.push(node_to_add.idx);
+            tree.arena.push(node_to_add);
         }
     }
+
+    let leaves = get_leaves(&tree);
+    println!(
+        "The sum of all directories with a file size less or equal to 100,000 is {}",
+        solve_part_one(&leaves, &mut tree)
+    );
+
+    println!("The smallest directory that could be deleted to make enough space for the update has a size of {}", solve_part_two(&leaves, &mut tree));
 }
 
-fn handle_command(line: &str, tree: &ArenaTree<&str>, current_dir: &mut usize) -> usize {
+fn solve_part_one(leaves: &Vec<usize>, tree: &mut ArenaTree<String>) -> u128 {
+    let mut sum_of_dirs = 0;
+
+    for leave in leaves {
+        let mut current_node: usize = leave.to_owned();
+        while tree.arena[current_node].parent.is_some() {
+            let size = tree.arena[current_node].size;
+            current_node = tree.arena[current_node].parent.unwrap();
+            tree.arena[current_node].size += size;
+        }
+    }
+
+    for dir in &tree.arena {
+        if !dir.children.is_empty() && dir.size <= 100000 {
+            sum_of_dirs += dir.size;
+        }
+    }
+
+    return sum_of_dirs;
+}
+
+fn solve_part_two(leaves: &Vec<usize>, tree: &mut ArenaTree<String>) -> u128 {
+    let mut sum_of_dirs = 0;
+
+    for leave in leaves {
+        let mut current_node: usize = leave.to_owned();
+        while tree.arena[current_node].parent.is_some() {
+            let size = tree.arena[current_node].size;
+            current_node = tree.arena[current_node].parent.unwrap();
+            tree.arena[current_node].size += size;
+        }
+    }
+
+    for dir in &tree.arena {
+        if !dir.children.is_empty() && dir.size <= 100000 {
+            sum_of_dirs += dir.size;
+        }
+    }
+
+    return sum_of_dirs;
+}
+
+fn get_leaves(tree: &ArenaTree<String>) -> Vec<usize> {
+    let mut leaves: Vec<usize> = Vec::new();
+    for node in tree.arena.iter() {
+        if node.children.len() == 0 {
+            leaves.push(node.idx);
+        }
+    }
+    return leaves;
+}
+
+fn handle_command(line: &str, tree: &ArenaTree<String>, current_dir: &mut usize) -> usize {
     if line.contains("cd") {
         let split: Vec<&str> = line.split_whitespace().collect();
         if split[1] == "cd" {
@@ -93,12 +156,13 @@ fn handle_command(line: &str, tree: &ArenaTree<&str>, current_dir: &mut usize) -
     return current_dir.clone();
 }
 
-fn handle_output(line: &str, tree: &mut ArenaTree<&str>, current_dir: &mut usize) {
+fn handle_output(line: &str, tree: &ArenaTree<String>, current_dir: usize) -> Node<String> {
     let split: Vec<&str> = line.split_whitespace().collect();
-    let mut new_node = Node::new(tree.size(), split[1]);
-    new_node.parent = Some(*current_dir);
-    tree.arena[*current_dir].children.push(new_node.idx);
+    let mut new_node = Node::new(tree.size(), split[1].to_owned());
+    new_node.parent = Some(current_dir);
     if !line.contains("dir") {
-        new_node.size = split[0].parse::<i32>().unwrap();
+        new_node.size = split[0].parse::<u128>().unwrap();
     }
+
+    new_node
 }
