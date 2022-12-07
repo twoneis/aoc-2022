@@ -1,4 +1,9 @@
-use std::{env::current_dir, fs, borrow::{Borrow, BorrowMut}, slice::SliceIndex};
+use std::{
+    borrow::{Borrow, BorrowMut},
+    env::current_dir,
+    fs,
+    slice::SliceIndex,
+};
 
 struct ArenaTree<T>
 where
@@ -32,7 +37,7 @@ where
 {
     idx: usize,
     val: T,
-    size: Option<i32>,
+    size: i32,
     parent: Option<usize>,
     children: Vec<usize>,
 }
@@ -45,7 +50,7 @@ where
         Self {
             idx,
             val,
-            size: None,
+            size: 0,
             parent: None,
             children: vec![],
         }
@@ -65,7 +70,7 @@ fn main() {
         if line.contains("$") {
             current_dir = handle_command(line, &tree, &mut current_dir);
         } else {
-            handle_output(line);
+            handle_output(line, &mut tree, &mut current_dir);
         }
     }
 }
@@ -75,7 +80,13 @@ fn handle_command(line: &str, tree: &ArenaTree<&str>, current_dir: &mut usize) -
         let split: Vec<&str> = line.split_whitespace().collect();
         if split[1] == "cd" {
             if split[2] == ".." {
-                return  tree.arena[current_dir.clone()].parent.unwrap();
+                return tree.arena[current_dir.clone()].parent.unwrap();
+            } else if split[2] == "/" {
+                let mut root_dir = *current_dir;
+                while tree.arena[current_dir.clone()].parent.is_some() {
+                    root_dir = tree.arena[current_dir.clone()].parent.unwrap();
+                }
+                return  root_dir;
             }
             for child in tree.arena[current_dir.clone()].children.clone() {
                 if tree.arena[child].val == split[2] {
@@ -87,8 +98,12 @@ fn handle_command(line: &str, tree: &ArenaTree<&str>, current_dir: &mut usize) -
     return current_dir.clone();
 }
 
-fn handle_output(line: &str) {
-    if line.contains("dir") {
-        
+fn handle_output(line: &str, tree: &mut ArenaTree<&str>, current_dir: &mut usize) {
+    let split: Vec<&str> = line.split_whitespace().collect();
+    let mut new_node = Node::new(tree.size(), split[1]);
+    new_node.parent = Some(*current_dir);
+    tree.arena[*current_dir].children.push(new_node.idx);
+    if !line.contains("dir") {
+        new_node.size = split[0].parse::<i32>().unwrap();
     }
 }
