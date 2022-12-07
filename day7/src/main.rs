@@ -1,9 +1,4 @@
-use std::{
-    borrow::{Borrow, BorrowMut},
-    env::current_dir,
-    fs,
-    slice::SliceIndex,
-};
+use std::fs;
 
 struct ArenaTree<T>
 where
@@ -86,7 +81,7 @@ fn handle_command(line: &str, tree: &ArenaTree<&str>, current_dir: &mut usize) -
                 while tree.arena[current_dir.clone()].parent.is_some() {
                     root_dir = tree.arena[current_dir.clone()].parent.unwrap();
                 }
-                return  root_dir;
+                return root_dir;
             }
             for child in tree.arena[current_dir.clone()].children.clone() {
                 if tree.arena[child].val == split[2] {
