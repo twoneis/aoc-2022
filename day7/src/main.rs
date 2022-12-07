@@ -90,7 +90,6 @@ fn calculate_dir_size(leaves: &Vec<usize>, tree: &mut TreeEnv<String>) {
             let size = tree.env[*leave].size;
             current_node = tree.env[current_node].parent.unwrap();
             tree.env[current_node].size += size;
-            println!("updating size of {} from bubbeling up {} with size {}", tree.env[current_node].val, tree.env[*leave].val, size)
         }
     }
 }
