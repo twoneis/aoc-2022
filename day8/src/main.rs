@@ -33,18 +33,10 @@ fn main() {
                 max_scenic_score = get_scenic_score(row_num, column_num, tree_grid.clone());
             }
             if test_tree_visibility(row_num, column_num, tree_grid.clone()) {
-                print!("{}", tree);
-                print!(
-                    "{} ",
-                    get_scenic_score(row_num, column_num, tree_grid.clone())
-                );
+                print!("{} ", tree);
                 visible_tree_counter += 1;
             } else {
-                print!(" ");
-                print!(
-                    "{} ",
-                    get_scenic_score(row_num, column_num, tree_grid.clone())
-                );
+                print!("  ");
             }
             column_num += 1;
         }
